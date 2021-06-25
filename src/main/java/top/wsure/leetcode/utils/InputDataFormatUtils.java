@@ -1,5 +1,7 @@
 package top.wsure.leetcode.utils;
 
+import top.wsure.leetcode.entity.ListNode;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -44,5 +46,15 @@ public class InputDataFormatUtils {
         );
     }
 
+
+    public static ListNode createListNode(String str){
+        List<ListNode> list = strArrToList(str,v->new ListNode(Integer.parseInt(v)));
+        for (int i =0;i<list.size();i++){
+            if(i<list.size()-1){
+                list.get(i).next = list.get(i+1);
+            }
+        }
+        return list.isEmpty() ? null : list.get(0);
+    }
 
 }
