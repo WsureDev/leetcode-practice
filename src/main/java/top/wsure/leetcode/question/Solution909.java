@@ -63,25 +63,82 @@ package top.wsure.leetcode.question;
 // 👍 59 👎 0
 
 
-import java.util.Deque;
-import java.util.LinkedList;
+import top.wsure.leetcode.utils.InputDataFormatUtils;
+
+import java.util.*;
 
 //leetcode submit region begin(Prohibit modification and deletion)
 public class Solution909 {
     public int snakesAndLadders(int[][] board) {
-
+        int n = board.length;
         Deque<Integer> deque = new LinkedList<>();
+        Map<Integer,Integer> map = new HashMap<>();
+        int start = numToHash(n-1,0);
+        deque.add(start);
+        map.put(start,0);
+        while (!deque.isEmpty())
+        {
+            int hash = deque.pollLast();
+            int step = map.get(hash);
+            int index = hashToIndex(hash,n);
+            if(index == n*n) return step;
+            for (int i=0;i<6;i++){
+                int newIndex = index+i+1;
+                if(newIndex <=0 || newIndex>n*n) continue;
+                int newHash = indexToHash(newIndex,n);
+                int toVal = getVal(board,newHash,n);
+                if(toVal>0 ) {
+                    newIndex = toVal;
+                    newHash = indexToHash(newIndex,n);
+                }
+                if(!map.containsKey(newHash)){
+                    map.put(newHash,step+1);
+                    deque.addFirst(newHash);
+                }
+            }
 
-
+        }
         return -1;
     }
 
-    public int num(int x,int y,int n){
+    public int getVal(int[][] board,int hash,int n){
+        return board[hashToNum(hash,true)][hashToNum(hash,false)];
+    }
+
+    public int hashToIndex(int hash, int n){
+        int x = hashToNum(hash,true);
+        int y = hashToNum(hash,false);
         return n * (n - x -1) + ( n % 2 == 0 ? (x % 2 == 0 ? n - y : y + 1 ) : (x % 2 == 0 ? y + 1 : n - y ) );
     }
 
+    public int indexToHash(int index,int n){
+        int x = n - ( index - 1) / n - 1;
+        int t = index - n * (n - x -1);
+        int y = n % 2 == 0 ? (x % 2 == 0 ? n - t : t - 1 ) : (x % 2 == 0 ? t - 1 : n - t ) ;
+        return numToHash(x,y);
+    }
+
+    public int numToHash(int x,int y){
+        return (x << 5) | y;
+    }
+
+    public int hashToNum(int num,boolean isX){
+        return isX ? num >> 5 : num & ((1 << 5) -1);
+    }
+
     public static void main(String[] args) {
-        System.out.println(new Solution909().num(1,3,5));
+        Solution909 solution = new Solution909();
+        int [][] array =InputDataFormatUtils.stringToArray("[[-1,-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1,-1],[-1,35,-1,-1,13,-1],[-1,-1,-1,-1,-1,-1],[-1,15,-1,-1,-1,-1]]");
+        System.out.println(solution.snakesAndLadders(array));
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)
+
+/**
+ 5:36 下午	info: 已提交,请稍等
+
+ 5:36 下午	info
+ 解答成功:
+ 执行耗时:14 ms,击败了16.82% 的Java用户
+ 内存消耗:38.4 MB,击败了82.27% 的Java用户
+ */
