@@ -2,6 +2,10 @@ package top.wsure.leetcode.utils;
 
 import top.wsure.leetcode.entity.ListNode;
 
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 /**
  * FileName: PrintUtils
  * Author:   wsure
@@ -16,5 +20,13 @@ public class PrintUtils {
             root = root.next;
         }
         System.out.println();
+    }
+
+    public static <R> String printList(List<R> list, Function<? super R, String> mapper,CharSequence delimiter){
+        return list.stream().map(mapper).collect(Collectors.joining(delimiter));
+    }
+
+    public static void printListListInteger(List<List<Integer>> list){
+        System.out.println(printList(list,v -> printList(v, Object::toString,","),"\n"));
     }
 }
