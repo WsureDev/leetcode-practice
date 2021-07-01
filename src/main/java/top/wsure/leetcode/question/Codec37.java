@@ -59,49 +59,95 @@ import java.util.stream.Collectors;
 public class Codec37 {
     public String serialize(TreeNode root) {
         if(root == null) return "[]";
-        StringBuilder res = new StringBuilder();
+        //res 用于提交，noNullLine 用于存放null，当有非null时提交到res且清空自身
+        StringBuilder res = new StringBuilder(), noNullLine = new StringBuilder();
+        //经典bfs起手式
         Deque<TreeNode> deque = new LinkedList<>();
         deque.add(root);
         while (!deque.isEmpty()){
+            //尾插头取
             TreeNode node = deque.pollFirst();
             if(node != null){
+                //非null时肯定有自己左右孩子的null，直接插（最后一层除外，多余的null用noNullLine提交的方式规避）
                 deque.addLast(node.left);
                 deque.addLast(node.right);
-                res.append(node.val).append(',');
+                //遇到非null，就提交noNullLine到res，再提交自己
+                res.append(noNullLine).append(node.val).append(',');
+                //清空noNullLine
+                noNullLine.delete(0,noNullLine.length());
             } else {
-                res.append("null,");
+                //记录null，等待非null出现一并提交
+                noNullLine.append("null,");
             }
         }
+        //去尾部逗号 加括号
         return "["+(res.length() > 0 ? res.subSequence(0,res.length()-1).toString() : res.toString())+"]";
     }
+
     public TreeNode deserialize(String data) {
+        if(data == null || data.isEmpty()) return null;
+        //去括号
         data = data.replaceAll("]","").replaceAll("\\[","");
         TreeNode root = null;
         if(!data.isEmpty()){
+            //切成数组
             String[] nums = data.split(",");
             if(nums.length>0){
+                //index 表示当前起始位置 ，len表示index开始的一层的元素数量
                 int index = 0,len = 1;
-                root = createNode(nums,index);
+                root = createNode(nums,0);
+                //bfs起手式
                 Deque<TreeNode> deque = new LinkedList<>();
                 deque.addFirst(root);
                 //todo 前面的蛆，以后再来探索吧
-                /*
-                while (!deque.isEmpty()){
+                /**
+                 * 思想 ： 使用一个双向链表实现存储一层，可能存在null，遍历记录本层非Null数量*2 ，就是下一层的长度。
+                 * 在取出本层元素的时候，同时填充下一层，
+                 * 每个取出的非null node的left位于 ：起始位置 + 本层长度 + 在本层非null元素序号（从0开始） * 2
+                 * 每个取出的非null node的right位于 ：起始位置 + 本层长度 + 在本层非null元素序号（从0开始） * 2 +1
+                 * 当每个层循环取出并填充孩子结束后，队列又被填满下一层的null和非null元素
+                 */
+                while (!deque.isEmpty() && index + len < nums.length){
+                    //记录在本层的非null元素数，用于统计下一层元素数
                     int numCount = 0;
-                    for(int i =0;i<len;i++){
-                        if()
-                        TreeNode left =
+                    for(int i = 0;i<len;i++){
+                        TreeNode node = deque.removeLast();
+                        if(node != null) {
+                            TreeNode left = createNode(nums,index +len+2*numCount);
+                            TreeNode right = createNode(nums,index +len+2*numCount+1);
+                            node.left = left;
+                            node.right = right;
+                            deque.addFirst(left);
+                            deque.addFirst(right);
+                            numCount ++;
+                        }
                     }
+                    //一层结束，index 移到下一层的位置
+                    index += len;
+                    //本层的非null元素数*2就是下一层的长度
+                    len = numCount *2;
                 }
-                */
             }
         }
         return root;
     }
 
     public TreeNode createNode(String[] nums,int index){
-        return index < 0 || index >= nums.length || nums[index] == null || nums[index].isEmpty() ? null : new TreeNode(Integer.parseInt(nums[index]));
+        return index < 0 || index >= nums.length || nums[index] == null || nums[index].isEmpty() || nums[index].equals("null") ? null : new TreeNode(Integer.parseInt(nums[index]));
     }
+
+    /**
+     * 4:02 下午	info: 已提交,请稍等
+     *
+     * 4:02 下午	info
+     * 					解答成功:
+     * 					执行耗时:28 ms,击败了24.76% 的Java用户
+     * 					内存消耗:39.7 MB,击败了92.44% 的Java用户
+     */
+
+
+
+
 
     /**
      * 理解错题意的笨比做法
@@ -166,11 +212,15 @@ public class Codec37 {
 
     public static void main(String[] args) {
         Codec37 codec37 = new Codec37();
-        String arrStr = codec37.serialize(new TreeNode(1,new TreeNode(2,new TreeNode(3),new TreeNode(4)),new TreeNode(5,new TreeNode(6),new TreeNode(7,new TreeNode(8),null))));
-        System.out.println(arrStr);
+//        String arrStr = codec37.serialize(new TreeNode(1,new TreeNode(2,new TreeNode(3),new TreeNode(4)),new TreeNode(5,new TreeNode(6),new TreeNode(7,new TreeNode(8),null))));
+//        System.out.println(arrStr);
 //        TreeNode node = codec37.deserialize(arrStr);
 //        System.out.println(codec37.serialize(node));
-        codec37.deserialize("[]");
-        System.out.println(codec37.serialize(null));
+//        codec37.deserialize("[]");
+//        System.out.println(codec37.serialize(null));
+
+        String input = "[5,2,3,null,null,2,4,3,1]";
+        TreeNode t1 = codec37.deserialize(input);
+        System.out.println(codec37.serialize(t1));
     }
 }
