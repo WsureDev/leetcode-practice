@@ -99,7 +99,6 @@ public class Codec37 {
                 //bfs起手式
                 Deque<TreeNode> deque = new LinkedList<>();
                 deque.addFirst(root);
-                //todo 前面的蛆，以后再来探索吧
                 /**
                  * 思想 ： 使用一个双向链表实现存储一层，可能存在null，遍历记录本层非Null数量*2 ，就是下一层的长度。
                  * 在取出本层元素的时候，同时填充下一层，
