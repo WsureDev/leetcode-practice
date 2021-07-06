@@ -57,33 +57,35 @@ import java.util.*;
 //leetcode submit region begin(Prohibit modification and deletion)
 public class SolutionLCP07 {
     public int numWays(int n, int[][] relation, int k) {
-        int count = 0;
-        if (relation == null || relation.length == 0) return count;
+        if (relation == null || relation.length == 0) return 0;
         Map<Integer, List<Integer>> map = new HashMap<>();
         for(int[] arr : relation){
             List<Integer> list = map.getOrDefault(arr[0], new ArrayList<>());
             list.add(arr[1]);
-            map.put(arr[0],list);
+            map.put(arr[0], list);
         }
         //todo 前面的蛆，以后再来探索吧
-        /*
-        Deque<Integer> deque = new LinkedList<>(map.get(0));
-        for(int i=0;i<k-1;i++){
-            Integer num = deque.pollFirst();
-            for (Integer nn:map.get(num)){
-                deque.
-            }
-        }
-        */
 
-        return count;
+        Deque<Integer> deque = new LinkedList<>(map.get(0));
+        while (k > 0) {
+            int size = deque.size();
+            while (size > 0 && ! deque.isEmpty()) {
+                Integer num = deque.pollFirst();
+                for (Integer nn : map.getOrDefault(num,Collections.emptyList())) {
+                    deque.addLast(nn);
+                }
+                size--;
+            }
+            k--;
+        }
+        return (int) deque.stream().filter( v -> v == n-1).mapToInt(v->v).count();
     }
 
     public static void main(String[] args) {
         SolutionLCP07 solution = new SolutionLCP07();
         int [][] relation = InputDataFormatUtils.stringToArray("[[0,2],[2,1],[3,4],[2,3],[1,4],[2,0],[0,4]]");
         int res = solution.numWays(5,relation,3);
-        System.out.println();
+        System.out.println(res);
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)
