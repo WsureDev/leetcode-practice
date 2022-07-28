@@ -37,8 +37,12 @@ package top.wsure.leetcode.question;
 // Related Topics 数组 哈希表
 // 👍 50 👎 0
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * FileName: Solution1711
