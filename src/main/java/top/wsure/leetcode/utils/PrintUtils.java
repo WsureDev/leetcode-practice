@@ -15,40 +15,40 @@ import java.util.stream.Collectors;
  */
 public class PrintUtils {
 
-    public static void printListNode(ListNode root){
-        while (root!=null){
-            System.out.print(root.val+"->");
+    public static void printListNode(ListNode root) {
+        while (root != null) {
+            System.out.print(root.val + "->");
             root = root.next;
         }
         System.out.println();
     }
 
-    public static <R> String printList(List<R> list, Function<? super R, String> mapper,CharSequence delimiter){
+    public static <R> String printList(List<R> list, Function<? super R, String> mapper, CharSequence delimiter) {
         return list.stream().map(mapper).collect(Collectors.joining(delimiter));
     }
 
-    public static void printListListInteger(List<List<Integer>> list){
-        System.out.println(printList(list,v -> printList(v, Object::toString,","),"\n"));
+    public static void printListListInteger(List<List<Integer>> list) {
+        System.out.println(printList(list, v -> printList(v, Object::toString, ","), "\n"));
     }
 
-    public static void printTreeNode(TreeNode root){
+    public static void printTreeNode(TreeNode root) {
         int wd = 4;
-        LinkedList<TreeNode> linkedList = new LinkedList<TreeNode>(){{
+        LinkedList<TreeNode> linkedList = new LinkedList<TreeNode>() {{
             add(root);
         }};
         List<List<String>> res = new ArrayList<>();
-        while (!linkedList.isEmpty()&& !linkedList.stream().allMatch(Objects::isNull)){
-            res.add(linkedList.stream().map(v ->String.format("%"+wd+"s", v == null ? "null" : String.valueOf(v.val))).collect(Collectors.toList()));
+        while (!linkedList.isEmpty() && !linkedList.stream().allMatch(Objects::isNull)) {
+            res.add(linkedList.stream().map(v -> String.format("%" + wd + "s", v == null ? "null" : String.valueOf(v.val))).collect(Collectors.toList()));
             linkedList = bfs(linkedList);
         }
         int longest = res.size();
-        for (int i = 0; i< res.size() ;i++){
+        for (int i = 0; i < res.size(); i++) {
             List<String> row = res.get(i);
-            int pre = (int) ((Math.pow(2,longest-i-1)-1)* wd);
-            int delimiter = (int) ((Math.pow(2,longest-i)-1)* wd);
-            System.out.println( repeat(" ",pre)+ String.join(repeat(" ",delimiter),row));
-            if(i != res.size() - 1){
-                System.out.println( repeat(" ",pre)+ row.stream().map(v-> String.format("%"+wd+"s"," / \\")).collect(Collectors.joining(repeat(" ", delimiter))));
+            int pre = (int) ((Math.pow(2, longest - i - 1) - 1) * wd);
+            int delimiter = (int) ((Math.pow(2, longest - i) - 1) * wd);
+            System.out.println(repeat(" ", pre) + String.join(repeat(" ", delimiter), row));
+            if (i != res.size() - 1) {
+                System.out.println(repeat(" ", pre) + row.stream().map(v -> String.format("%" + wd + "s", " / \\")).collect(Collectors.joining(repeat(" ", delimiter))));
             }
         }
     }
@@ -66,10 +66,11 @@ public class PrintUtils {
 88  99  00  00  00  00  00  00
 */
 
-    public static String repeat(String s,int count){
-        return String.join("", Collections.nCopies(count,s));
+    public static String repeat(String s, int count) {
+        return String.join("", Collections.nCopies(count, s));
     }
-    public static LinkedList<TreeNode> bfs(LinkedList<TreeNode> parentLevel){
+
+    public static LinkedList<TreeNode> bfs(LinkedList<TreeNode> parentLevel) {
         LinkedList<TreeNode> res = new LinkedList<TreeNode>();
         int parentLevelSize = parentLevel.size();
         for (TreeNode node : parentLevel) {
