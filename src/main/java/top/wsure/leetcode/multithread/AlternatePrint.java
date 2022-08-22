@@ -36,4 +36,12 @@ public class AlternatePrint {
         a.thread2.start();
     }
 
+    Runnable a = () -> {
+        int a = 1;
+        int b = 2;
+
+    };
+
+    Thread aaa = new Thread(a);
+
 }

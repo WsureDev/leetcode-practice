@@ -4,6 +4,7 @@ import top.wsure.leetcode.entity.TreeNode;
 import top.wsure.leetcode.utils.InputDataFormatUtils;
 
 import java.util.LinkedList;
+import java.util.stream.Stream;
 
 /*
     FileName:   Solution1302
