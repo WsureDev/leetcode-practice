@@ -6,6 +6,7 @@ import top.wsure.leetcode.entity.TreeNode;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * FileName: PrintUtils
@@ -83,5 +84,9 @@ public class PrintUtils {
             }
         }
         return res;
+    }
+
+    public static void printArray(int[][] arr) {
+        System.out.println(Arrays.stream(arr).map(Arrays::toString).collect(Collectors.joining()));
     }
 }
